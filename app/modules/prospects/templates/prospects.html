@@ -1,0 +1,156 @@
+<div class="splitview splitview-filled splitview-bordered">
+  <div class="container">
+    <div class="two-col-wrapper">
+      <div class="col-md-2 leftnav" ng-if="prospects.displayNavigator" style="padding-left: 5px;">
+        <div class="row" style="position:fixed;background-color:#f0f0f0;margin-right: -30px;margin-left: -5px;">
+          <h4 class="pagetitle" style="margin-left:30px;">Find Prospects by</h4>
+        </div>
+        <div headroom="" class="doc-side-nav headroom headroom-not-top" tolerance="0" offset="0" classes="{'initial':'','pinned':'','unpinned':'','top':'headroom-top','notTop':'headroom-not-top'}">
+          <nav class="hidden-print hidden-xs hidden-sm" role="tablist">
+            <ul class="nav">
+              <!--master here means scroll to the Top -->
+              <li><a du-smooth-scroll="existingClients" du-scrollspy ui-sref="prospects({'#':'existingClients'})" href="" class="" ng-if="prospects.byLocationAllowed">
+                             Existing Clients</a></li>
+              <li><a du-smooth-scroll="existingOpportunity" du-scrollspy ui-sref="prospects({'#':'existingOpportunity'})" href="" class="" ng-if="prospects.byStatusAllowed">
+                             Existing Opportunity</a></li>
+              <li><a du-smooth-scroll="shippingOpportunities" du-scrollspy ui-sref="prospects({'#':'shippingOpportunities'})" href="" class="" ng-if="prospects.byCarrierAllowed">
+                             Shipping Opportunities</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div ng-class="{'col-md-10 scroll-content main-content':prospects.displayNavigator,
+                          'col-md-12':prospects.byLocationAllowed || prospects.byStatusAllowed || prospects.byCarrierAllowed}">
+        <section id="existingClients">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-10" style="padding-left: 0px">
+                <h1 class="pagetitle" style="margin-left: 0px">Existing Clients</h1>
+              </div>
+              <div class="col-md-2">
+                <h1>
+                  <form class="form-inline">
+                    <div class="form-group dropdown">
+                      <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-click="prospects.open(item)">
+                      <i class="nc-icon-mini fw ui-2_filter"></i> Filter <i class="nc-icon-mini arrows-3_small-down"></i>
+                    </button>
+                      <!-- <ul class="dropdown-menu" role="menu">
+                        <li class="dropdown-header">Filter By:</li>
+                        <li>
+                          <a>Show all</a>
+                          <a>Example link</a>
+                          <a>Example link</a>
+                          <a>Example link</a>
+                          <a>Example link</a>
+                          <a>Example link</a>
+                          <a>Example link</a>
+                        </li>
+                      </ul> -->
+                    </div>
+                  </form>
+                </h1>
+              </div>
+            </div>
+          </div>
+          <form id="" novalidate>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="col-md-4">
+                    <div class="card card-default">
+                      <div class="card-heading" style="border-bottom: 0px solid #e1e1e1;">
+                        <h5 style="margin-top: 0px;margin-bottom: 0px;text-align: center;">Number of Opportunities</h5>
+                      </div>
+                      <div class="card-body" style="padding-top: 10px;padding-bottom: 20px;">
+                        <h2 style="margin-top: 0px;margin-bottom: 0px;margin-bottom: 0px;margin-top: 0px;text-align: center;">{{prospects.numberOfOpportunities}}</h2>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="card card-shadowed">
+                      <div class="card-heading" style="border-bottom: 0px solid #e1e1e1;">
+                        <h4 style="margin-top: 0px;margin-bottom: 0px;">Conversion Probability</h4>
+                        <p style="margin-top: 0px;margin-bottom: 0px;color:#c0c0c0;font-size: 14px">In Percentage</p>
+                      </div>
+                      <div class="card-body">
+                        <canvas id="bar" class="chart chart-bar" chart-data="prospects.existingClientsBarGraph.data" chart-options="prospects.existingClientsBarGraph.options" chart-labels="prospects.existingClientsBarGraph.labels" chart-colors="prospects.existingClientsBarGraph.colors" chart-click="prospects.existingClientsBarGraph.click"></canvas>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="col-md-7"></div>
+                      <div class="col-md-5" style="padding-left: 80px;padding-right: 0px;">
+                        <button class="btn btn-default" ng-csv="prospects.dataName" filename="test.csv"><i class="nc-icon-mini fw arrows-1_download"></i> Export CSV</button>
+                        <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export SFDC</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section id="existingOpportunity">
+          <div class="row">
+            <h1 class="pagetitle">Existing Opportunity</h1>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="card card-shadowed">
+                  <div class="card-heading" style="border-bottom: 0px solid #e1e1e1;">
+                    <h4 style="margin-top: 0px;margin-bottom: 0px;">Conversion Probability</h4>
+                    <p style="margin-top: 0px;margin-bottom: 0px;color:#c0c0c0;font-size: 14px">In Percentage</p>
+                  </div>
+                  <div class="card-body">
+                    <!--<canvas id="pie" class="chart chart-pie" chart-data="prospects.statusPieGraph.data" chart-options="prospects.statusPieGraph.options" chart-labels="prospects.statusPieGraph.labels" chart-colors="prospects.colors"></canvas>-->
+                    <canvas id="bar" class="chart chart-bar" chart-data="prospects.existingOpportunityBarGraph.data" chart-options="prospects.existingOpportunityBarGraph.options" chart-labels="prospects.existingOpportunityBarGraph.labels" chart-colors="prospects.existingOpportunityBarGraph.colors" chart-click="prospects.existingOpportunityBarGraph.click"></canvas>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="col-md-7"></div>
+                  <div class="col-md-5" style="padding-left: 80px;padding-right: 0px;">
+                    <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export CSV</button>
+                    <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export SFDC</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="shippingOpportunities">
+          <div class="row">
+            <h1 class="pagetitle">Shipping Opportunities</h1>
+          </div>
+          <form novalidate ng-if="prospects.byCarrierAllowed">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="card card-shadowed">
+                    <div class="card-heading" style="border-bottom: 0px solid #e1e1e1;">
+                      <h4 style="margin-top: 0px;margin-bottom: 0px;">Conversion Probability</h4>
+                      <p style="margin-top: 0px;margin-bottom: 0px;color:#c0c0c0;font-size: 14px">In Percentage</p>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="bar" class="chart chart-bar" chart-data="prospects.shippingOpportunitiesBarGraph.data" chart-options="prospects.shippingOpportunitiesBarGraph.options" chart-labels="prospects.shippingOpportunitiesBarGraph.labels" chart-colors="prospects.shippingOpportunitiesBarGraph.colors" chart-click="prospects.shippingOpportunitiesBarGraph.click"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5" style="padding-left: 80px;padding-right: 0px;">
+                      <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export CSV</button>
+                      <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export SFDC</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
