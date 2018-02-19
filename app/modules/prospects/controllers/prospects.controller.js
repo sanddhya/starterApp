@@ -67,7 +67,8 @@
               for (var i = 0; i < 10; i++) {
                 _this.existingOpportunityBarGraphLabels.push(_this.dataName[i].Zip_Code);
                 _this.existingOpportunityBarGraphCount.push(_this.dataName[i].Median_Age);
-              };
+              }
+              ;
               console.log(_this.existingOpportunityBarGraphLabels);
               console.log(_this.existingOpportunityBarGraphCount);
               var res = alasql('SELECT dep, SUM(qt) AS qt, SUM(qt*price) AS amt, AGGR(amt/qt) AS price FROM ? GROUP BY dep', [_this.dataName]);

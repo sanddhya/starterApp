@@ -125,10 +125,8 @@
                 _this.caSeries.push(res[0].caData);
               });
 
-
               console.log(_this.caSeries);
               console.log(_this.usSeries);
-
               console.log(_this.frSeries);
 
             }

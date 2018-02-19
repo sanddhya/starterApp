@@ -13620,7 +13620,7 @@ dim_date_key,event_source,message_id,serial_number,meter_id,pcn,sent_to,template
 20180211,iot,16186f55e46bfd9868c7d0a683bdaf08,1154534,1154534_1H00,1H00,kathleen.judnick@amcor.com,csd-autoink-en_US-lowink-v1,en-US,21:23.0,27:56.0,Yes,No,No,No
 20180211,iot,1618574d96a57cb37540784e64208fd3,1159341,1159341_1H00,1H00,ssaltus@chilewich.com,csd-autoink-en_US-lowink-v1,en-US,21:23.0,27:55.0,Yes,No,Yes,No
 20180211,iot,161833d457fc29b5112a2cd50e2452d1,1165708,1165708_1H00,1H00,nicole@pinetreefoodequipment.com,csd-autoink-en_US-lowink-v1,en-US,01:26.0,27:54.0,Yes,No,Yes,No
-20180211,iot,16186f5611aa762aef0947320390ffbb,1154534,1154534_1H00,1H00,carizia.sandoval@ororagroup.com,csd-autoink-en_US-lowink-v1,fr-FR,21:24.0,27:56.0,Yes,No,Yes,No
+20180211,iot,16186f5611aa762aef0947320390ffbb,1154534,1154534_1H00,1H00,carizia.sandoval@ororagroup.com,csd-autoink-en_US-lowink-v1,en-FR,21:24.0,27:56.0,Yes,No,Yes,No
 20180211,iot,161832f73150a1215344b8311cfa49f6,1159102,1159102_1H00,1H00,tina.valenzuela@technocel.com,csd-autoink-en_US-lowink-v1,en-US,46:21.0,27:54.0,Yes,No,No,No
 20180211,iot,16184992217bdf5dec9a94fd8aed3893,1164999,1164999_1H00,1H00,jason@oausa.com,csd-autoink-en_US-lowink-v1,en-US,21:24.0,27:54.0,Yes,No,Yes,No
 20180211,iot,161835d47238730d6fabb2ba429577bb,1165336,1165336_1H00,1H00,kdelaney@rickcarroll.com,csd-autoink-en_US-lowink-v1,en-US,36:24.0,27:54.0,Yes,No,Yes,No
