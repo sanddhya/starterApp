@@ -31,19 +31,17 @@
                 <h1>
                   <form class="form-inline">
                     <div class="form-group dropdown">
-                      <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-click="prospects.open(item)">
-                      <i class="nc-icon-mini fw ui-2_filter"></i> Filter <i class="nc-icon-mini arrows-3_small-down"></i>
-                    </button>
+                      <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-click="prospects.open();">
+                        <i class="nc-icon-mini fw ui-2_filter"></i> Filter <i class="nc-icon-mini arrows-3_small-down"></i>
+                      </button>
                       <!-- <ul class="dropdown-menu" role="menu">
                         <li class="dropdown-header">Filter By:</li>
                         <li>
-                          <a>Show all</a>
-                          <a>Example link</a>
-                          <a>Example link</a>
-                          <a>Example link</a>
-                          <a>Example link</a>
-                          <a>Example link</a>
-                          <a>Example link</a>
+                            <div class="checkbox" ng-repeat="filter in prospects.existingClientsFilter">
+                                <label id="union-mapping-name" title="{{filter.name}}">
+                                  <input type="checkbox" ng-model="filter.selected" ng-click="prospects.getExistingClientsBarGraphData()">     {{filter.name}}
+                                </label>
+                            </div>
                         </li>
                       </ul> -->
                     </div>
@@ -62,7 +60,7 @@
                         <h5 style="margin-top: 0px;margin-bottom: 0px;text-align: center;">Number of Opportunities</h5>
                       </div>
                       <div class="card-body" style="padding-top: 10px;padding-bottom: 20px;">
-                        <h2 style="margin-top: 0px;margin-bottom: 0px;margin-bottom: 0px;margin-top: 0px;text-align: center;">{{prospects.numberOfOpportunities}}</h2>
+                        <h2 style="margin-top: 0px;margin-bottom: 0px;margin-bottom: 0px;margin-top: 0px;text-align: center;">{{numberOfOpportunities}}</h2>
                       </div>
                     </div>
                   </div>
@@ -79,7 +77,7 @@
                     <div class="col-md-12">
                       <div class="col-md-7"></div>
                       <div class="col-md-5" style="padding-left: 80px;padding-right: 0px;">
-                        <button class="btn btn-default" ng-csv="prospects.dataName" filename="test.csv"><i class="nc-icon-mini fw arrows-1_download"></i> Export CSV</button>
+                        <button class="btn btn-default" ng-csv="prospects.dataName2" filename="Existing_Customer_Look_Alike.csv"><i class="nc-icon-mini fw arrows-1_download"></i> Export CSV</button>
                         <button class="btn btn-default"><i class="nc-icon-mini fw arrows-1_download"></i> Export SFDC</button>
                       </div>
                     </div>

@@ -1,78 +1,58 @@
-(function () {
+(function() {
+  "use strict";
 
-  'use strict';
+  angular
+    .module("pb.ds.prospects")
+    .controller("ModalController", function(
+      $log,
+      $uibModalInstance,
+      itemResolve,
+      $http
+    ) {
+      console.log(itemResolve);
+      var _this = this;
 
-  angular.module('pb.ds.prospects').controller('ModalController', function ($log, $uibModalInstance, itemResolve) {
+      _this.item = itemResolve;
 
-    var _this = this;
 
-    _this.item = itemResolve;
+      _this.close = function() {
+        $uibModalInstance.close();
+      };
 
-    _this.close = function () {
-      $uibModalInstance.close();
-    };
-
-    _this.facet = {
-      list: [],
-      groups: ['Root', 'Contributors', 'Danbury', 'Shelton', 'Stamford', 'Troy', 'Noida', 'Pune', 'Austin', 'Lanham', 'Boulder', 'Watford', 'Paris', 'Sydney', 'Dallas', 'San Diego', 'Toronto', 'Chatham', 'Kyiv', 'Hartford'],
-      clear: function () {
-        _this.facet.list = [];
-  
-        angular.forEach(_this.table.search, function (value, key, obj) {
-          var parent = value;
-  
-          angular.forEach(parent, function (value, key, obj) {
-            if (parent[key]) {
-              parent[key] = false;
-            }
-          });
-  
-          _this.table.search.country = '';
+      _this.labelPrinterFilter = itemResolve.label;
+      _this.multicarrierSubscriptionFilter = itemResolve.multicarrierSubscription;
+      _this.dataName = [];
+      $http.get("../modules/prospects/existingClients.csv").then(function(response) {
+        console.log(response);
+        Papa.parse(response.data, {
+          worker: true,
+          delimiter: ',',
+          header: true,
+          step: function(results) {
+            _this.dataName.push(results.data[0]);
+          },
+          complete: function() {
+            console.log(_this.dataName);
+            alasql('SELECT DISTINCT SIC8_DESCRIPTION FROM ? ',[_this.dataName],function(res){
+              console.log(res);
+            });
+          }
         });
-      },
-      selectChange: function () {
-        var selected = _this.table.search.country;
-  
-        if (selected) {
-          _this.facet.list.push(_this.table.search.country);
-        }
-      },
-      checked: function (value, item) {
-        if (value) {
-          _this.facet.list.push(item);
-        } else {
-          var index = _this.facet.list.indexOf(item);
-          _this.facet.list.splice(index, 1);
-        }
-      },
-  
-      clearBadge: function (item, event) {
-        event.stopPropagation();
-        event.preventDefault();
-  
-        var itemIndex = _this.facet.list.indexOf(item);
-        _this.facet.list.splice(itemIndex, 1);
-  
-        if (_this.table.search.country === item) {
-          _this.table.search.country = '';
-          return;
-        }
-  
-        angular.forEach(_this.table.search, function (value, key, obj) {
-          var parent = value;
-  
-          angular.forEach(parent, function (value, key, obj) {
-            if (key === item) {
-              parent[item] = false;
-            }
-          });
-        });
-      }
-  
-    };
+      });
+      _this.SIC8_NewFilter = [];
 
-    $log.debug(_this.item);
+      _this.apply = function() {
+        _this.filter = {
+          'label': _this.labelPrinterFilter,
+          'multicarrierSubscription': _this.multicarrierSubscriptionFilter
+        };
+        $uibModalInstance.close(_this.filter);
+      };
 
-  });
+      _this.cancel = function() {
+        $uibModalInstance.dismiss();
+      };
 
+      $log.debug(_this.item);
+    });
 })();
