@@ -57,9 +57,9 @@
                             {{communication.totalEmailsSent || 0}}</h2>
                           <p class="category-widget-description">Total Email's Sent</p>
                         </div>
-                      <!--  <div class="card-footer" style="text-align: center;padding-top: 10px;padding-bottom: 10px;">
-                          <h4 class="category-widget-title" style="color: blue;">Export Details</h4>
-                        </div>-->
+                        <!--  <div class="card-footer" style="text-align: center;padding-top: 10px;padding-bottom: 10px;">
+                            <h4 class="category-widget-title" style="color: blue;">Export Details</h4>
+                          </div>-->
                       </div>
                     </div>
                     <div class="col-md-4">
@@ -125,7 +125,9 @@
                                 chart-options="communication.emailSentGraph.options"
                                 chart-labels="communication.emailSentGraph.labels"
                                 chart-series="communication.emailSentGraph.series"
-                                chart-colors="communication.colors"></canvas>
+                                chart-colors="communication.colors"
+                                ng-show="communication.emailSentGraph.labels.length>0"></canvas>
+                        <div ng-show="communication.emailSentGraph.labels.length ==0">No data available.</div>
                       </div>
                     </div>
                     <div class="col-md-12">

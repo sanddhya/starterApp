@@ -11,14 +11,15 @@
       this.byCarrierAllowed = true;
       this.displayNavigator =
         this.byLocationAllowed && this.byStatusAllowed && this.byCarrierAllowed;
-      _this.totalEmailsSent = 2000;
-      _this.opened = 1000;
-      _this.delivered = 500;
-      _this.unsubscribed = 100;
-      _this.clicked = 200;
-      _this.usSeries = [];
-      _this.frSeries = [];
-      _this.caSeries = [];
+      _this.totalEmailsSent = 0;
+      _this.opened = 0;
+      _this.delivered = 0;
+      _this.unsubscribed = 0;
+      _this.clicked = 0;
+      _this.lowLink = [];
+      _this.subscription = [];
+      _this.meterError = [];
+      _this.chartLabels = [];
 
       _this.colors = [
         "#3e53a4",
@@ -33,47 +34,61 @@
 
       _this.getEmailSentGraph = function () {
         _this.emailSentGraph = {
-          labels: ["2017", "2018"],
+          labels: _this.chartLabels,
           options: {
-            legend: {
-              display: true,
-              position: "top",
-              fullWidth: false,
-              labels: {
-                boxWidth: 15
-              }
+            scales: {
+              xAxes: [{
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    'millisecond': 'YYYY-MM-DD',
+                    'second': 'YYYY-MM-DD',
+                    'minute': 'YYYY-MM-DD',
+                    'hour': 'YYYY-MM-DD',
+                    'day': 'YYYY-MM-DD',
+                    'week': 'YYYY-MM-DD',
+                    'month': 'YYYY-MM-DD',
+                    'quarter': 'YYYY-MM-DD',
+                    'year': 'YYYY-MM-DD'
+                  }
+                }
+              }]
             }
           },
-          data: [_this.usSeries, _this.frSeries, _this.caSeries],
-          series: ["en-US", "en-FR", "en-CA"],
-          colors: _this.colors,
-          click: function (points, evt) {
-            //
-          }
-        };
+          series: ['Low Link', 'Subscription', 'meterError'],
+          data: [
+            _this.lowLink, _this.subscription, _this.meterError
+          ]
+        }
       };
 
 
       _this.getEmailSentGraphData = function () {
-        console.log(_this.startDate);
-        console.log(_this.endDate);
-        // AREA
-
-        // $http.get("welcome.htm").then(function(response) {
-        //   response.data.forEach((data) => {
-        //     _this.labels.push();
-        //     _this.count.push();
-        //   });
-        // _this.totalEmailsSent = 2000;
-        // _this.totalEmailsSent = 1000;
-        // _this.totalEmailsSent = 500;
-        //   _this.getEmailSentGraph();
-        // });
         _this.getEmailSentGraph();
       };
 
 
+      alasql.fn.timestamp = function (x) {
+        var year = x.substr(0, 4);
+        var month = x.substr(4, 2);
+        var day = x.substr(6, 2);
+        return new Date(year + '/' + month + '/' + day).getTime();
+      };
+
+
       _this.getDataForAllCounts = function () {
+        _this.chartLabels = [];
+        _this.lowLink = [];
+        _this.meterError = [];
+        _this.subscription = [];
+        //fill up labels
+        var minDate = new Date(_this.startDate).getTime();
+        var maxDate = new Date(_this.endDate).getTime();
+
+        for (var i = minDate; i <= maxDate; i = i + 86400000) {
+          _this.chartLabels.push(i);
+        }
+
         _this.dataName = [];
         $http.get("../modules/communication/communication.csv").then(function (response) {
           Papa.parse(response.data, {
@@ -84,56 +99,80 @@
               _this.dataName.push(results.data[0]);
             },
             complete: function () {
-              console.log(_this.dataName);
-              alasql('SELECT count(*) as delivered FROM ? WHERE Delivered = "Yes" ', [_this.dataName], function (res) {
-                _this.delivered = res[0].delivered;
-              });
-              alasql('SELECT count(*) as totalEmailsSent FROM ?', [_this.dataName], function (res) {
-                _this.totalEmailsSent = res[0].totalEmailsSent;
-              });
-              alasql('SELECT count(*) as unsubscribed FROM ? WHERE Unsubscibed = "Yes" ', [_this.dataName], function (res) {
-                _this.unsubscribed = res[0].unsubscribed;
-              });
-              alasql('SELECT count(*) as opened FROM ? WHERE Opened = "Yes" ', [_this.dataName], function (res) {
-                _this.opened = res[0].opened;
-              });
-              alasql('SELECT count(*) as clicked FROM ? WHERE Clicked = "Yes" ', [_this.dataName], function (res) {
-                _this.clicked = res[0].clicked;
+              alasql('SELECT count(*) as delivered FROM ? WHERE Delivered = "Yes" and template_id LIKE "csd%" and  timestamp(dim_date_key) <'
+                + new Date(_this.endDate).getTime()
+                + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime(),
+                [_this.dataName], function (res) {
+                  _this.delivered = res[0].delivered;
+                });
+
+              alasql('SELECT count(*) as totalEmailsSent FROM ? WHERE template_id LIKE "csd%" and  timestamp(dim_date_key) <'
+                + new Date(_this.endDate).getTime()
+                + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime(),
+                [_this.dataName], function (res) {
+                  _this.totalEmailsSent = res[0].totalEmailsSent;
+                });
+
+              alasql('SELECT count(*) as unsubscribed FROM ? WHERE Unsubscibed = "Yes" and template_id LIKE "csd%" and  timestamp(dim_date_key) <'
+                + new Date(_this.endDate).getTime()
+                + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime(),
+                [_this.dataName], function (res) {
+                  _this.unsubscribed = res[0].unsubscribed;
+                });
+
+              alasql('SELECT count(*) as opened FROM ? WHERE Opened = "Yes" and template_id LIKE "csd%" and  timestamp(dim_date_key) <'
+                + new Date(_this.endDate).getTime()
+                + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime(),
+                [_this.dataName], function (res) {
+                  _this.opened = res[0].opened;
+                });
+
+              alasql('SELECT count(*) as clicked FROM ? WHERE Clicked = "Yes" and template_id LIKE "csd%" and  timestamp(dim_date_key) <'
+                + new Date(_this.endDate).getTime()
+                + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime(),
+                [_this.dataName], function (res) {
+                  _this.clicked = res[0].clicked;
+                });
+
+
+              // for graph
+              alasql('SELECT dim_date_key, COUNT(*) as total FROM ?  WHERE template_id LIKE "csd%lowink%" and timestamp(dim_date_key)< ' +
+                +new Date(_this.endDate).getTime() + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime() +
+                'group by dim_date_key', [_this.dataName], function (res) {
+                for (var i = 0; i < res.length; i++) {
+                  if (res[i].dim_date_key) {
+                    _this.lowLink.push({x: new Date(alasql.fn.timestamp(res[i].dim_date_key)), y: res[i].total});
+                  }
+                }
               });
 
-              alasql('SELECT count(*) as usData FROM ? WHERE  dim_date_key LIKE "2017%" and locale = "en-US"', [_this.dataName], function (res) {
-                _this.usSeries.push(res[0].usData);
+              alasql('SELECT dim_date_key, COUNT(*) as total FROM ?  WHERE template_id LIKE "csd%metererror%" and timestamp(dim_date_key)< ' +
+                +new Date(_this.endDate).getTime() + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime() +
+                'group by dim_date_key', [_this.dataName], function (res) {
+                for (var i = 0; i < res.length; i++) {
+                  if (res[i].dim_date_key) {
+                    _this.meterError.push({x: new Date(alasql.fn.timestamp(res[i].dim_date_key)), y: res[i].total});
+                  }
+                }
               });
 
-              alasql('SELECT count(*) as usData FROM ? WHERE dim_date_key LIKE "2018%" and locale = "en-US"', [_this.dataName], function (res) {
-                _this.usSeries.push(res[0].usData);
+              alasql('SELECT dim_date_key, COUNT(*) as total FROM ?  WHERE template_id LIKE "csd%subscription%" and timestamp(dim_date_key)< ' +
+                +new Date(_this.endDate).getTime() + 'and timestamp(dim_date_key) >=' + new Date(_this.startDate).getTime() +
+                'group by dim_date_key', [_this.dataName], function (res) {
+                for (var i = 0; i < res.length; i++) {
+                  if (res[i].dim_date_key) {
+                    _this.subscription.push({x: new Date(alasql.fn.timestamp(res[i].dim_date_key)), y: res[i].total});
+                  }
+                }
               });
 
-              alasql('SELECT count(*) as frData FROM ? WHERE dim_date_key LIKE "2017%" and locale = "en-FR"', [_this.dataName], function (res) {
-                _this.frSeries.push(res[0].frData);
-              });
-
-              alasql('SELECT count(*) as frData FROM ? WHERE dim_date_key LIKE "2018%" and locale = "en-FR"', [_this.dataName], function (res) {
-                _this.frSeries.push(res[0].frData);
-              });
-
-              alasql('SELECT count(*) as caData FROM ? WHERE dim_date_key LIKE "2017%" and locale = "en-CA"', [_this.dataName], function (res) {
-                _this.caSeries.push(res[0].caData);
-              });
-
-              alasql('SELECT count(*) as caData FROM ? WHERE dim_date_key LIKE "2018%" and locale = "en-CA"', [_this.dataName], function (res) {
-                _this.caSeries.push(res[0].caData);
-              });
-
-              console.log(_this.caSeries);
-              console.log(_this.usSeries);
-              console.log(_this.frSeries);
-
+              console.log(_this.lowLink);
+              console.log(_this.meterError);
+              console.log(_this.subscription);
             }
           });
         });
       };
-      _this.getDataForAllCounts();
 
       _this.dateRangePicker = {
         date: {
@@ -146,15 +185,17 @@
           opens: "center",
           autoApply: true,
           ranges: {
-            Today: [moment(), moment()],
-            "Last 7 Days": [moment().subtract(6, "days"), moment()],
-            "Month to date": [moment().startOf("month"), moment()],
-            "Year to date": [moment().startOf("year"), moment()]
+            'Today': [moment(), moment()],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(90, 'days'), moment()],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'Last Year': [moment().subtract(1, 'year').startOf('month'), moment().startOf('month')]
           },
           eventHandlers: {
             "apply.daterangepicker": function () {
-              _this.startDate = moment(_this.dateRangePicker.date.startDate).format("MM/DD/YYYY");
-              _this.endDate = moment(_this.dateRangePicker.date.endDate).format("MM/DD/YYYY");
+              _this.startDate = moment(_this.dateRangePicker.date.startDate).format("YYYY/MM/DD");
+              _this.endDate = moment(_this.dateRangePicker.date.endDate).format("YYYY/MM/DD");
+              _this.getDataForAllCounts();
               _this.getEmailSentGraphData();
             }
           }
@@ -174,27 +215,25 @@
 
             // if the selected date is the same as today date, display "Today" in the result
             if (isDaySame && isMonthSame && isYearSame) {
-              result = "Today " + moment(startDate).format("MM/DD/YYYY");
+              result = "Today " + moment(startDate).format("YYYY/MM/DD");
             } else {
-              result = moment(startDate).format("MM/DD/YYYY");
+              result = moment(startDate).format("YYYY/MM/DD");
             }
-          } else if (dateDiff === 6) {
-            result = "Last 7 days";
           } else {
             result =
               "From " +
-              moment(startDate).format("MM/DD/YYYY") +
+              moment(startDate).format("YYYY/MM/DD") +
               " to " +
-              moment(endDate).format("MM/DD/YYYY");
+              moment(endDate).format("YYYY/MM/DD");
           }
 
           return result;
         }
       };
 
-      _this.startDate = moment(_this.dateRangePicker.date.startDate).format("MM/DD/YYYY");
-      _this.endDate = moment(_this.dateRangePicker.date.endDate).format("MM/DD/YYYY");
+      _this.startDate = moment(_this.dateRangePicker.date.startDate).format("YYYY/MM/DD");
+      _this.endDate = moment(_this.dateRangePicker.date.endDate).format("YYYY/MM/DD");
+      _this.getDataForAllCounts();
       _this.getEmailSentGraphData();
-
     });
 })();
