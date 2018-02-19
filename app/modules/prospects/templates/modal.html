@@ -2,16 +2,41 @@
   <button type="button" class="close" ng-click="modal.close()">
     <span aria-hidden="true"></span><span class="sr-only">Close</span>
   </button>
-  <h3 class="modal-title">{{modal.item.name}}</h3>
+  <h3 class="modal-title">Filter</h3>
 </div>
 
 <div class="modal-body">
   <div class="row">
-    <div class="col-xs-3">
-      <img class="img-responsive center-block" ng-src="{{modal.item.image}}">
+    <div class="col-md-6">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="modal.labelPrinterFilter" > Label Printer
+        </label>
+      </div>
     </div>
-    <div class="col-xs-6">
-      Sorry, you've already set up an account.
+    <div class="col-md-6">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="modal.multicarrierSubscriptionFilter" > Multicarrier Subscription
+        </label>
+      </div>
     </div>
+    <!-- <div class="col-md-12" >
+      SIC8:
+      <div class="checkbox" ng-repeat="filter in prospects.SIC8_NewFilter">
+        <label title="{{filter.name}}">
+          <input type="checkbox" ng-model="filter.selected" > {{filter.name}}
+        </label>
+      </div>
+    </div> -->
   </div>
+</div>
+
+<div class="modal-footer">
+  <button ng-click="modal.apply()" class="btn btn-primary">
+    Apply
+  </button>
+  <button class="btn btn-default" class="btn" ng-click="modal.cancel()">
+    Cancel
+  </button>
 </div>
